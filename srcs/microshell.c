@@ -48,7 +48,6 @@ bool	find_next(t_command_handler *current) {
 	}
 	if 		(!valid) return false;
 	else if (!current->data[i]) return true;
-	printf("MIDDLE\n");
 	while (current->data[++i]) {
 		if (!strcmp(PIPE, current->data[i])) {
 				current->next_pipe = i;

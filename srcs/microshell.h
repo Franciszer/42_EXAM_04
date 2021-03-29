@@ -42,7 +42,7 @@ typedef struct	s_command_handler {
 	name.begin = NOT_SET;\
 	name.next_pipe = NOT_SET;\
 	name.next_sep = NOT_SET;\
-	name.env = env_vars;
+	name.env = (const char**)env_vars;
 
 void	microshell(const char **args, const char **env_vars);
 
