@@ -6,7 +6,7 @@
 /*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 09:57:22 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/29 13:14:47 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/03/29 16:06:16 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <signal.h>
 # include <fcntl.h>
 # include <string.h>
+# include <stdio.h>
 # include <stdbool.h>
 
 # define PIPE 		"|"

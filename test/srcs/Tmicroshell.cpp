@@ -6,7 +6,7 @@
 /*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 10:04:49 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/29 15:11:39 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/03/29 15:58:50 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,18 @@ using				std::string;
 using				std::pair;
 extern const char	**environ;
 
-
+# define INIT_ARGS(init_list...)\
+	vargs.assign({init_list});\
+	set_args(vargs);
 
 class	TMicroshell: public ::testing::Test {
 	public:
 		TMicroshell() {}
 	protected:
 		t_command_handler	current;
-		char			**args;
+		char				**args;
+
+		vector<string>	vargs;
 		virtual void	SetUp() {
 			args = NULL;
 		}
@@ -40,6 +44,7 @@ class	TMicroshell: public ::testing::Test {
 		virtual void	TearDown() {
 			if (args)
 				free_args();
+			args = NULL;
 		}
 		void			free_args() {
 			for (int i = 0 ; args[i] ; i++)
@@ -55,20 +60,28 @@ class	TMicroshell: public ::testing::Test {
 					args[p.first] = strcpy(args[p.first], p.second->c_str());
 				}
 		}
-		inline void		expect_vals(const int x, const int y, const int z) {
-			EXPECT_EQ(x, current.begin);
-			EXPECT_EQ(y, current.next_pipe);
-			EXPECT_EQ(z, current.next_sep);
+		inline void		eq_command_handler(const int begin, const int next_pipe,\
+			const int next_sep) {
+			EXPECT_EQ(begin, current.begin);
+			EXPECT_EQ(next_pipe, current.next_pipe);
+			EXPECT_EQ(next_sep, current.next_sep);
 		}
 				
 };
 
-TEST_F(TMicroshell, current_init) {
-	vector<string>	init_args({"cd"});
-	set_args(init_args);
+TEST_F(TMicroshell, find_next) {
+	
+	INIT_ARGS({"cd"});
 	INIT_COMMAND_HANDLER(current, (const char**)args, environ);
 	find_next(&current);
-	expect_vals(0, NOT_SET, NOT_SET);
+	eq_command_handler(0, NOT_SET, NOT_SET);
+	TearDown();
+	
+	INIT_ARGS("cd", ";", "ls", "|", "pwd");
+	INIT_COMMAND_HANDLER(current, (const char**)args, environ);
+	std::cout << "BEFORE" << std::endl;
+	find_next(&current);
+	std::cout << "AFTER" << std::endl;
+	eq_command_handler(0, NOT_SET, 1);
 }
-
 
