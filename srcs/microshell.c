@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   microshell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 09:56:29 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/29 16:06:49 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/03/29 21:02:02 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void	handle_error_fatal(const char *str, const char exit_status) {
 bool	find_next(t_command_handler *current) {
 	int		i = current->begin;
 	bool	valid = false;
+	current->next_sep = NOT_SET;
+	current->next_pipe = NOT_SET;
 	while (current->data[++i]) {
 		if (strcmp(PIPE, current->data[i]) &&\
 			strcmp(SEP, current->data[i])) {
@@ -53,11 +55,10 @@ bool	find_next(t_command_handler *current) {
 				current->next_pipe = i;
 				return true;
 			}
-		if (!strcmp(SEP, current->data[i])) {
+		else if (!strcmp(SEP, current->data[i])) {
 			current->next_sep = i;
 			return true;
 		}
-			
 	}
 	return true;
 }

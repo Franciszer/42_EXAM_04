@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Tmicroshell.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 10:04:49 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/29 15:58:50 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/03/29 21:03:26 by francisco        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ class	TMicroshell: public ::testing::Test {
 			args = NULL;
 		}
 		void			free_args() {
-			std::cerr << "in free_args" << '\n';
 			for (int i = 0 ; args[i] ; i++)
 				delete [] args[i];
 			delete [] args;
@@ -56,7 +55,7 @@ class	TMicroshell: public ::testing::Test {
 			args = new char*[v.size() + 1];
 			args[v.size()] = NULL;
 			for (pair<size_t, vector<string>::const_iterator> p(0, v.begin()) ;\
-				p.second != v.end() ; p.second++) {
+				p.second != v.end() ; p.first++, p.second++) {
 					args[p.first] = new char[p.second->size() + 1];
 					args[p.first][p.second->size()] = '\0';
 					args[p.first] = strcpy(args[p.first], p.second->c_str());
@@ -80,10 +79,12 @@ TEST_F(TMicroshell, find_next) {
 	TearDown();
 	
 	INIT_ARGS("cd", ";", "ls", "|", "pwd");
-	// INIT_COMMAND_HANDLER(current, (const char**)args, environ);
-	// std::cout << "BEFORE" << std::endl;
-	// find_next(&current);
-	// std::cout << "AFTER" << std::endl;
-	// eq_command_handler(0, NOT_SET, 1);
+	INIT_COMMAND_HANDLER(current, (const char**)args, environ);
+	EXPECT_TRUE(find_next(&current));
+	eq_command_handler(0, NOT_SET, 1);
+	EXPECT_TRUE(find_next(&current));
+	eq_command_handler(2, 3, NOT_SET);
+	EXPECT_TRUE(find_next(&current));
+	eq_command_handler(4, NOT_SET, NOT_SET);
+	EXPECT_FALSE(find_next(&current));
 }
-
