@@ -6,12 +6,16 @@
 /*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 10:04:49 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/04 10:05:50 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/03/04 11:44:45 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <gtest/gtest.h>
 #include "microshell.h"
+
+TEST(FIRST_TEST, FUNC) {
+	EXPECT_EQ(ret1(), 1);
+}
 
 TEST(FIRST_TEST, TEST_TRUE) {
 	EXPECT_TRUE(true);
