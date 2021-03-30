@@ -11,7 +11,7 @@ target_include_directories(${This} PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/srcs/)
 target_link_libraries(${This} PUBLIC
 	gtest_main
-	microshell
+	micro_lib
 )
 
 add_test(

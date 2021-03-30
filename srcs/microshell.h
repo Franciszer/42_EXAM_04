@@ -6,7 +6,7 @@
 /*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 09:57:22 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/30 12:22:21 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/03/30 14:38:57 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 # define SEP 		";"
 # define NOT_SET	-1
 # define SET(x)		x != NOT_SET
-# define INIT_PIPE(pid) if ((pid = fork()) != -1);
+# define INIT_PIPE(pid) if ((pid = fork()) != -1); FATAL_SYSCALL;
 
 # define ERR_RET 			1
 # define ERR_CD_BAD_ARGS	"error: cd: bad arguments"
@@ -76,7 +76,7 @@ void	exec_command(const t_command_handler *current);
 
 void	exec_pipe(const t_command_handler *current);
 
-void	exec_pipeless(const t_command_handler *current);
+void	exec_pipeless(char * const *args, char * const *env, size_t size);
 
 void	bt_cd(const t_command_handler *current);
 
@@ -84,5 +84,6 @@ void	free_args(char **args, const int max_idx);
 
 void	fatal_free_args(char **args, const int max_idx);
 
+char	**copy_args(const t_command_handler *current);
 
 #endif

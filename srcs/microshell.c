@@ -6,7 +6,7 @@
 /*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 09:56:29 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/30 12:23:18 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/03/30 15:09:40 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,29 @@ void	free_args(char **args, const int max_idx) {
 	for (int i = 0; i < max_idx ; i++)
 		free(args[i]);
 	free(args);
+	args = NULL;
 }
 
 void	fatal_free_args(char **args, const int max_idx) {
 	handle_error("error: cannot execute ");
-	handle_error(args[i]);
+	handle_error(args[0]);
 	free_args(args, max_idx);
 	exit (1);
+}
+
+char	**copy_args(const t_command_handler *current) {
+	char **args;
+	
+	if (!(args = malloc(sizeof(char*) * ((current->end_args - current->begin) + 1))))
+		FATAL_SYSCALL;
+	for (int i = current->begin; i < current->end_args ; i++) {
+		if (!(args[i - current->begin] = malloc\
+			(sizeof(char) * (ft_strlen(current->data[i]) + 1))))
+				fatal_free_args(args, i);
+		else
+			strcpy(args[i - current->begin], current->data[i]);
+	}
+	return args;
 }
 
 bool	find_next(t_command_handler *current) {
@@ -72,7 +88,7 @@ bool	find_next(t_command_handler *current) {
 	while (current->data[++i]) {
 		if (!strcmp(PIPE, current->data[i])) {
 				current->next_pipe = i;
-				current->nb_args = current->next_pipe - current->begin;
+				current->end_args = current->next_pipe - current->begin;
 				return true;
 			}
 		else if (!strcmp(SEP, current->data[i])) {
@@ -93,41 +109,32 @@ void	bt_cd(const t_command_handler *current) {
 		FATAL_CD_CHDIR;
 }
 
-void	exec_pipeless(const t_command_handler *current) {
+void	exec_pipeless(char * const *args, char * const *env, size_t size) {
 	pid_t	pid;
 
-	if (!INIT_PIPE(pid))
-		FATAL_SYSCALL;
-	else if (CHILD(pid)) {
-		if (execve(current->data[current->begin], args, current->env_vars) == -1)
-			fatal_free_args();
+	INIT_PIPE(pid);
+	if (CHILD(pid)) {
+		if (execve(args[0], args, env) == -1)
+			fatal_free_args((char**)args, size);
 	}
-	else {
+	else
 		waitpid(pid, NULL, 0);
-	}
 }
 
 void	exec_command(const t_command_handler *current) {
-	char **args;
-		
-
-	if (!(args = malloc(sizeof(char*) * ((current->end_args - current->begin) + 1))))
-		FATAL_SYSCALL;
-	for (int i = current->begin; i < current->end_args ; i++) {
-		if (!(args[i - current->begin] = malloc\
-			(sizeof(char) * (ft_strlen(current->data[i]) + 1)))
-				fatal_free_args(args, i);
-		strcpy(args[i - current->begin], current->args[i]);
-	}
-	if (!SET(current->next_pipe)) {
-		
-	}
+	char **args = copy_args(current);
+	size_t	size = current->end_args - current->begin;
+	
+	exec_pipeless((char *const*)args, (char *const*)current->env, size);
+	free_args(args, size);
 }
 
 void	microshell(const char **args, const char **env_vars) {
 	t_command_handler	command_handler;
 	
+	
 	INIT_COMMAND_HANDLER(command_handler, args, env_vars);
+	printf("LESSGO");
 	while(find_next(&command_handler)) exec_command(&command_handler);
-	return 0;
+	return ;
 }
