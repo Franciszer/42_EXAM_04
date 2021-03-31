@@ -6,7 +6,7 @@
 /*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 09:56:29 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/31 14:17:03 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/03/31 14:25:45 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void	free_args(char **args, const int max_idx) {
 
 void	fatal_free_args(char **args, const int max_idx) {
 	free_args(args, max_idx);
-	printf("in fatal_free args\n");
 	handle_error(args[0]);
 	exit(1);
 }
