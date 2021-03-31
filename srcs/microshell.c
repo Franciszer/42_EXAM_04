@@ -6,7 +6,7 @@
 /*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 09:56:29 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/30 15:09:40 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/03/31 14:17:03 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,17 +43,19 @@ void	free_args(char **args, const int max_idx) {
 }
 
 void	fatal_free_args(char **args, const int max_idx) {
-	handle_error("error: cannot execute ");
-	handle_error(args[0]);
 	free_args(args, max_idx);
-	exit (1);
+	printf("in fatal_free args\n");
+	handle_error(args[0]);
+	exit(1);
 }
 
 char	**copy_args(const t_command_handler *current) {
-	char **args;
-	
-	if (!(args = malloc(sizeof(char*) * ((current->end_args - current->begin) + 1))))
+	char 	**args;
+	size_t	size = current->end_args - current->begin;
+
+	if (!(args = malloc(sizeof(char*) * (size + 1))))
 		FATAL_SYSCALL;
+	args[size] = NULL;
 	for (int i = current->begin; i < current->end_args ; i++) {
 		if (!(args[i - current->begin] = malloc\
 			(sizeof(char) * (ft_strlen(current->data[i]) + 1))))
@@ -83,17 +85,22 @@ bool	find_next(t_command_handler *current) {
 				break;
 			}
 	}
-	if 		(!valid) return false;
-	else if (!current->data[i]) return true;
+	if 		(!valid)
+		return false;
+	else if (!current->data[i] || !current->data[i + 1]) {
+		// ft_pustr_fd("TTTTTTTWWWWWWWOOOOOOOOO\n\n\n\n", 2);
+		current->end_args = ++i;
+		return true;
+	}
 	while (current->data[++i]) {
 		if (!strcmp(PIPE, current->data[i])) {
 				current->next_pipe = i;
-				current->end_args = current->next_pipe - current->begin;
+				current->end_args = i;
 				return true;
 			}
 		else if (!strcmp(SEP, current->data[i])) {
 			current->next_sep = i;
-			current->end_args = current->next_sep - current->begin;
+			current->end_args = i;
 			return true;
 		}
 	}
@@ -112,13 +119,19 @@ void	bt_cd(const t_command_handler *current) {
 void	exec_pipeless(char * const *args, char * const *env, size_t size) {
 	pid_t	pid;
 
-	INIT_PIPE(pid);
-	if (CHILD(pid)) {
+	if ((pid = fork()) == -1)
+		handle_error_fatal("error_fata", 1);
+	else if (pid == 0) {
+		for (size_t i = 0; args[i]; i++)
 		if (execve(args[0], args, env) == -1)
 			fatal_free_args((char**)args, size);
 	}
-	else
-		waitpid(pid, NULL, 0);
+	else {
+		int		exit_status;
+		waitpid(pid, &exit_status, 0);
+		if (WIFEXITED(exit_status))
+			exit(1);
+	}
 }
 
 void	exec_command(const t_command_handler *current) {
@@ -134,7 +147,8 @@ void	microshell(const char **args, const char **env_vars) {
 	
 	
 	INIT_COMMAND_HANDLER(command_handler, args, env_vars);
-	printf("LESSGO");
-	while(find_next(&command_handler)) exec_command(&command_handler);
+	while(find_next(&command_handler)){
+		exec_command(&command_handler);
+	}
 	return ;
 }

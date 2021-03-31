@@ -6,7 +6,7 @@
 /*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 09:57:22 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/30 14:38:57 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/03/31 10:34:18 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,14 @@
 # define SEP 		";"
 # define NOT_SET	-1
 # define SET(x)		x != NOT_SET
-# define INIT_PIPE(pid) if ((pid = fork()) != -1); FATAL_SYSCALL;
+# define INIT_PIPE(pid) if ((pid = fork()) == -1); FATAL_SYSCALL;
 
 # define ERR_RET 			1
 # define ERR_CD_BAD_ARGS	"error: cd: bad arguments"
 # define FATAL_CD_BAD_ARGS	handle_error_fatal(ERR_CD_BAD_ARGS, ERR_RET)
 # define FATAL_CD_CHDIR		handle_error("error: cd: cannot change directory to ");\
 								handle_error_fatal(current->data[current->begin + 1], ERR_RET)
-# define FATAL_SYSCALL		handle_error_fatal("error: fatal", 1)
+# define FATAL_SYSCALL		handle_error_fatal("error: fatal\n", 1)
 
 # define CHILD(pid)			pid == 0
 # define PARENT(pid)		pid != 0

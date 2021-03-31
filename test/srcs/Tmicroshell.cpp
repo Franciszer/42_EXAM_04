@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Tmicroshell.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francisco <francisco@student.42.fr>        +#+  +:+       +#+        */
+/*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 10:04:49 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/29 21:03:26 by francisco        ###   ########.fr       */
+/*   Updated: 2021/03/31 13:08:19 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,17 @@ class	TMicroshell: public ::testing::Test {
 				}
 		}
 		inline void		eq_command_handler(const int begin, const int next_pipe,\
-			const int next_sep) {
+			const int next_sep, const int end_args) {
 			EXPECT_EQ(begin, current.begin);
 			EXPECT_EQ(next_pipe, current.next_pipe);
 			EXPECT_EQ(next_sep, current.next_sep);
+			EXPECT_EQ(end_args, current.end_args);
+		}
+		static inline void	print_command_handler(t_command_handler &current) {
+			std::cout << "begin: " << current.begin << std::endl;
+			std::cout << "next_pipe: " << current.next_pipe << std::endl;
+			std::cout << "next_sep: " << current.next_sep << std::endl;
+			std::cout << "end_args: " << current.end_args << std::endl;
 		}
 				
 };
@@ -75,16 +82,32 @@ TEST_F(TMicroshell, find_next) {
 	INIT_ARGS({"cd"});
 	INIT_COMMAND_HANDLER(current, (const char**)args, environ);
 	find_next(&current);
-	eq_command_handler(0, NOT_SET, NOT_SET);
+	eq_command_handler(0, NOT_SET, NOT_SET, 1);
 	TearDown();
 	
 	INIT_ARGS("cd", ";", "ls", "|", "pwd");
 	INIT_COMMAND_HANDLER(current, (const char**)args, environ);
 	EXPECT_TRUE(find_next(&current));
-	eq_command_handler(0, NOT_SET, 1);
+	eq_command_handler(0, NOT_SET, 1, 1);
 	EXPECT_TRUE(find_next(&current));
-	eq_command_handler(2, 3, NOT_SET);
+	eq_command_handler(2, 3, NOT_SET, 3);
 	EXPECT_TRUE(find_next(&current));
-	eq_command_handler(4, NOT_SET, NOT_SET);
+	eq_command_handler(4, NOT_SET, NOT_SET, 5);
 	EXPECT_FALSE(find_next(&current));
+}
+
+TEST_F(TMicroshell, copy_args) {
+	INIT_ARGS("/bin/ls", "hello", "world");
+	INIT_COMMAND_HANDLER(current, (const char**)args, environ);
+	find_next(&current);
+
+	size_t	test_size = 0;
+	for (size_t i = 0; args[i]; i++)
+		test_size++;
+	ASSERT_EQ(0, current.begin);
+	ASSERT_EQ(3, current.end_args);
+	EXPECT_EQ(3, test_size);
+	EXPECT_EQ(string(args[0]), "/bin/ls");
+	EXPECT_EQ(string(args[1]), "hello");
+	EXPECT_EQ(string(args[2]), "world");	
 }
