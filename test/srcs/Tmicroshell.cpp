@@ -6,7 +6,7 @@
 /*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 10:04:49 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/31 13:08:19 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/04/01 18:05:08 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,5 +109,14 @@ TEST_F(TMicroshell, copy_args) {
 	EXPECT_EQ(3, test_size);
 	EXPECT_EQ(string(args[0]), "/bin/ls");
 	EXPECT_EQ(string(args[1]), "hello");
-	EXPECT_EQ(string(args[2]), "world");	
+	EXPECT_EQ(string(args[2]), "world");
+	TearDown();
+
+	INIT_ARGS("/bin/echo", "a", ";", "/bin/ls");
+	INIT_COMMAND_HANDLER(current, (const char**)args, environ);
+	EXPECT_TRUE(find_next(&current));
+	eq_command_handler(0, NOT_SET, 2, 2);
+	EXPECT_TRUE(find_next(&current));
+	eq_command_handler(3, NOT_SET, NOT_SET, 4);
+	EXPECT_FALSE(find_next(&current));
 }

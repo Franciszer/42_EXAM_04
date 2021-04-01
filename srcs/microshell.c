@@ -6,7 +6,7 @@
 /*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 09:56:29 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/31 14:25:45 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/04/01 18:13:56 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	fatal_free_args(char **args, const int max_idx) {
 	exit(1);
 }
 
-char	**copy_args(const t_command_handler *current) {
+char	**copy_args(const t_command_handler* const current) {
 	char 	**args;
 	size_t	size = current->end_args - current->begin;
 
@@ -87,7 +87,6 @@ bool	find_next(t_command_handler *current) {
 	if 		(!valid)
 		return false;
 	else if (!current->data[i] || !current->data[i + 1]) {
-		// ft_pustr_fd("TTTTTTTWWWWWWWOOOOOOOOO\n\n\n\n", 2);
 		current->end_args = ++i;
 		return true;
 	}
@@ -107,7 +106,7 @@ bool	find_next(t_command_handler *current) {
 	return true;
 }
 
-void	bt_cd(const t_command_handler *current) {
+void	bt_cd(const t_command_handler* const current) {
 	if (current->end_args != 1) {
 			FATAL_CD_BAD_ARGS;
 		}
@@ -133,7 +132,7 @@ void	exec_pipeless(char * const *args, char * const *env, size_t size) {
 	}
 }
 
-void	exec_command(const t_command_handler *current) {
+void	exec_command(const t_command_handler* const current) {
 	char **args = copy_args(current);
 	size_t	size = current->end_args - current->begin;
 	
@@ -143,10 +142,13 @@ void	exec_command(const t_command_handler *current) {
 
 void	microshell(const char **args, const char **env_vars) {
 	t_command_handler	command_handler;
-	
-	
+		
+	printf("____ARGS____\n");
+	for (int i = 0 ; args[i] ; i++)
+		printf("%i: %s\n", i, args[i]);
 	INIT_COMMAND_HANDLER(command_handler, args, env_vars);
 	while(find_next(&command_handler)){
+		printf("heredeouf\n");
 		exec_command(&command_handler);
 	}
 	return ;

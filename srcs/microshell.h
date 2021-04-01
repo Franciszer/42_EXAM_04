@@ -6,7 +6,7 @@
 /*   By: frthierr <frthierr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 09:57:22 by frthierr          #+#    #+#             */
-/*   Updated: 2021/03/31 10:34:18 by frthierr         ###   ########.fr       */
+/*   Updated: 2021/04/01 18:13:07 by frthierr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,18 +72,18 @@ void	handle_error_fatal(const char *str, const char exit_status);
 
 bool	find_next(t_command_handler *current);
 
-void	exec_command(const t_command_handler *current);
+void	exec_command(const t_command_handler* const current);
 
-void	exec_pipe(const t_command_handler *current);
+void	exec_pipe(const t_command_handler* const current);
 
 void	exec_pipeless(char * const *args, char * const *env, size_t size);
 
-void	bt_cd(const t_command_handler *current);
+void	bt_cd(const t_command_handler* const current);
 
 void	free_args(char **args, const int max_idx);
 
 void	fatal_free_args(char **args, const int max_idx);
 
-char	**copy_args(const t_command_handler *current);
+char	**copy_args(const t_command_handler* const current);
 
 #endif
